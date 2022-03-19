@@ -1,4 +1,4 @@
-package clipy
+package main
 
 import (
 	"bufio"
