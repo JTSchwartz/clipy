@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"io"
+	"log"
 	"os"
 
 	"github.com/pkg/errors"
@@ -12,23 +13,14 @@ import (
 )
 
 func main() {
-	var path string
-
 	app := &cli.App{
 		Name:  "clipy",
 		Usage: "Copy file contents or pipe data to clipboard",
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:        "path",
-				Value:       "",
-				Usage:       "Optional path to file",
-				Destination: &path,
-			},
-		},
 		Action: func(c *cli.Context) error {
 			if isInputFromPipe() {
 				return toClipboard(os.Stdin)
 			} else {
+				path := c.Args().Get(0)
 				file, e := getFile(path)
 				if e != nil {
 					return e
@@ -39,7 +31,10 @@ func main() {
 		},
 	}
 
-	app.Run(os.Args)
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func toClipboard(r io.Reader) error {
