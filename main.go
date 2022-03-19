@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -13,12 +14,23 @@ import (
 )
 
 func main() {
+	var isOutputEnabled bool
+
 	app := &cli.App{
 		Name:  "clipy",
 		Usage: "Copy file contents or pipe data to clipboard",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:        "output",
+				Aliases:     []string{"o"},
+				Usage:       "Continue the flow of data by outputting whatever is input",
+				Value:       false,
+				Destination: &isOutputEnabled,
+			},
+		},
 		Action: func(c *cli.Context) error {
 			if isInputFromPipe() {
-				return toClipboard(os.Stdin)
+				return toClipboard(os.Stdin, isOutputEnabled)
 			} else {
 				path := c.Args().Get(0)
 				file, e := getFile(path)
@@ -26,7 +38,7 @@ func main() {
 					return e
 				}
 				defer file.Close()
-				return toClipboard(file)
+				return toClipboard(file, isOutputEnabled)
 			}
 		},
 	}
@@ -37,11 +49,17 @@ func main() {
 	}
 }
 
-func toClipboard(r io.Reader) error {
+func toClipboard(r io.Reader, isOutputEnabled bool) error {
 	var content string
 	scanner := bufio.NewScanner(bufio.NewReader(r))
 	for scanner.Scan() {
-		content += scanner.Text()
+		text := scanner.Text()
+		content += text + "\n"
+		if isOutputEnabled {
+			if _, e := fmt.Println(text); e != nil {
+				return e
+			}
+		}
 	}
 	return clipboard.WriteAll(content)
 }
