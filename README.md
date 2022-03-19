@@ -1,1 +1,2 @@
-Check back once v1.0.0 is released for documentation
+[![GoDoc](https://godoc.org/github.com/jtschwartz/clipy?status.svg)](https://pkg.go.dev/github.com/jtschwartz/clipy)
+[![Go Report Card](https://goreportcard.com/badge/jtschwartz/clipy)](https://goreportcard.com/report/jtschwartz/clipy)

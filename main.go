@@ -31,15 +31,14 @@ func main() {
 		Action: func(c *cli.Context) error {
 			if isInputFromPipe() {
 				return toClipboard(os.Stdin, isOutputEnabled)
-			} else {
-				path := c.Args().Get(0)
-				file, e := getFile(path)
-				if e != nil {
-					return e
-				}
-				defer file.Close()
-				return toClipboard(file, isOutputEnabled)
 			}
+			path := c.Args().Get(0)
+			file, e := getFile(path)
+			if e != nil {
+				return e
+			}
+			defer file.Close()
+			return toClipboard(file, isOutputEnabled)
 		},
 	}
 
