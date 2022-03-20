@@ -27,3 +27,5 @@ clipy -o path/to/file.ext | grep ...
 ```shell
 go install github.com/jtschwartz/clipy@latest
 ```
+
+Installation requires Go 1.16+ and ensure that `$GOPATH/bin` is apart of your `PATH`.
